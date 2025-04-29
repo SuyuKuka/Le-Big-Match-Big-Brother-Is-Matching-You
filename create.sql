@@ -29,7 +29,9 @@ CREATE TABLE utilisateur(
 -- Formulaires à l'inscription
 
 CREATE TABLE formulaire(
-    id_formulaire SERIAL PRIMARY KEY
+    id_formulaire SERIAL PRIMARY KEY,
+    id_utilisateur INTEGER NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE formulaire_physique(
@@ -66,14 +68,6 @@ CREATE TABLE formulaire_sexualite(
     FOREIGN KEY (id_formulaire) REFERENCES formulaire(id_formulaire)
 );
 
-CREATE TABLE inscription(
-    id_utilisateur INT NOT NULL,
-    id_formulaire INT NOT NULL,
-    PRIMARY KEY (id_utilisateur, id_formulaire),
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_formulaire) REFERENCES formulaire(id_formulaire)
-);
-
 -- Abonnement utilisateur
 
 CREATE TYPE type_abonnement AS ENUM ('ARGENT', 'OR', 'DIAMANT');
@@ -87,12 +81,13 @@ CREATE TABLE abonne(
 );
 
 -- Match, chat et intéraction
+CREATE TYPE statut_match AS ENUM ('ACTIF', 'INACTIF');
 
--- Match je sais pas trop
-CREATE TABLE match(
-    id_match SERIAL PRIMARY KEY,
+CREATE TABLE match( -- Aussi utilisé comme historique de match
+    id SERIAL PRIMARY KEY,
     id_utilisateur1 INTEGER NOT NULL,
     id_utilisateur2 INTEGER NOT NULL,
+    statut_match statut_match NOT NULL,
     FOREIGN KEY (id_utilisateur1) REFERENCES utilisateur(id),
     FOREIGN KEY (id_utilisateur2) REFERENCES utilisateur(id),
     UNIQUE(id_utilisateur1, id_utilisateur2),
@@ -100,34 +95,17 @@ CREATE TABLE match(
 );
 
 CREATE TABLE historique_match(
+    id SERIAL PRIMARY KEY,
     id_match INTEGER NOT NULL,
     id_utilisateur INTEGER NOT NULL,
-    PRIMARY KEY(id_match, id_utilisateur),
-    FOREIGN KEY (id_match) REFERENCES match(id_match),
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id)
-);
-
--- Match terminé et en cours??
-
-CREATE TABLE chat(
-    id_chat SERIAL,
-    id_match INTEGER NOT NULL,
-    PRIMARY KEY(id_chat, id_match),
-    FOREIGN KEY (id_match) REFERENCES match(id_match),
-    UNIQUE(id_match)
-);
-
-CREATE TABLE message(
-    id_message SERIAL PRIMARY KEY,
-    id_chat INTEGER NOT NULL,
-    contenu TEXT NOT NULL,
-    date TIMESTAMP NOT NULL,
-    FOREIGN KEY (id_chat) REFERENCES chat(id_chat)
+    FOREIGN KEY (id_match) REFERENCES match(id),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
+    UNIQUE(id_match, id_utilisateur)
 );
 
 CREATE TYPE type_interaction AS ENUM ('LIKE', 'NOPE');
 
-CREATE TABLE suggestion_utilisateur(
+CREATE TABLE suggestion_match(
     id_utilisateur_source INTEGER NOT NULL,
     id_utilisateur_cible INTEGER NOT NULL,
     type_interaction type_interaction NOT NULL,
@@ -136,9 +114,25 @@ CREATE TABLE suggestion_utilisateur(
     FOREIGN KEY (id_utilisateur_cible) REFERENCES utilisateur(id)
 );
 
--- Evenements
+-- Table chat est "optionnelle" (voir rapport)
 
--- l'organisateur peut être le pseudo d'un utilisateur ou le nom d'une entité extérieure à l'application
+CREATE TABLE chat(
+    id SERIAL PRIMARY KEY,
+    id_match INTEGER NOT NULL,
+    FOREIGN KEY (id_match) REFERENCES match(id_match),
+    UNIQUE(id_match)
+);
+
+CREATE TABLE message(
+    id SERIAL PRIMARY KEY,
+    id_chat INTEGER NOT NULL,
+    id_utilisateur_source INTEGER NOT NULL,
+    contenu TEXT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_chat) REFERENCES chat(id_chat)
+);
+
+-- Evenements
 
 CREATE TABLE lieu(
     id SERIAL PRIMARY KEY,
@@ -148,23 +142,19 @@ CREATE TABLE lieu(
     UNIQUE (adresse, code_postal, pays)
 );
 
+CREATE TYPE evenement_temporalite AS ENUM ("TERMINE", "EN COURS", "FUTUR");
+
 CREATE TABLE evenement(
     id SERIAL PRIMARY KEY,
     id_lieu INTEGER NOT NULL,
     titre TEXT NOT NULL,
+    evenement_temporalite evenement_temporalite NOT NULL,
     description TEXT NOT NULL,
     date timestamp NOT NULL,
+    -- l'organisateur peut être le pseudo d'un utilisateur ou le nom d'une entité extérieure à l'application donc doit être de type TEXT
     organisateur TEXT NOT NULL,
     prix INTEGER NOT NULL,
     FOREIGN KEY (id_lieu) REFERENCES lieu(id)
-);
-
-CREATE TABLE historique_evenement(
-    id_utilisateur INTEGER NOT NULL,
-    id_evenement INTEGER NOT NULL,
-    PRIMARY KEY(id_utilisateur, id_evenement),
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_evenement) REFERENCES evenement(id)
 );
 
 CREATE TABLE suggestion_evenement(
@@ -175,17 +165,27 @@ CREATE TABLE suggestion_evenement(
     FOREIGN KEY (id_evenement) REFERENCES evenement(id)
 );
 
--- Evenement terminé et futur??
-
-CREATE TYPE type_utilisateur_evenement AS ENUM ('Intéresser', 'Participer', 'Annoncer');
+CREATE TYPE type_utilisateur_evenement AS ENUM ('Intéresser', 'Participer');
 
 CREATE TABLE utilisateur_evenement(
+    id SERIAL PRIMARY KEY,
     id_utilisateur INTEGER NOT NULL,
     id_evenement INTEGER NOT NULL,
-    type_utilisateur_evenement type_utilisateur_evenement NOT NULL,
-    PRIMARY KEY(id_utilisateur, id_evenement),
+    type_utilisateur_evenement type_utilisateur_evenement,
+    a_annonce BOOLEAN,
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_evenement) REFERENCES evenement(id)
+    FOREIGN KEY (id_evenement) REFERENCES evenement(id),
+    UNIQUE(id_utilisateur, id_evenement),
+    CHECK (
+        type_utilisateur_evenement IS NOT NULL OR a_annonce IS DISTINCT FROM FALSE
+    )
+);
+
+CREATE TABLE historique_utilisateur_evenement(
+    id SERIAL PRIMARY KEY,
+    id_utilisateur_evenement INTEGER NOT NULL,
+    FOREIGN KEY (id_utilisateur_evenement) REFERENCES utilisateur_evenement(id),
+    UNIQUE(id_match)
 );
 
 -- Tags
@@ -202,23 +202,28 @@ CREATE TABLE sous_categorie_tag(
     FOREIGN KEY (id_categorie) REFERENCES categorie_tag(id)
 );
 
-CREATE TABLE tag(
+CREATE TABLE mot_clef(
     id SERIAL PRIMARY KEY,
     id_sous_categorie INTEGER NOT NULL,
-    nom VARCHAR(24) NOT NULL,
+    mot VARCHAR(24) NOT NULL,
     FOREIGN KEY (id_sous_categorie) REFERENCES sous_categorie_tag(id),
-    UNIQUE(id_sous_categorie, nom)
+    UNIQUE(id_sous_categorie, mot)
 );
 
--- Probleme evenement et utilisateur peuvent etre nuls
-CREATE TABLE tagguer(
+CREATE TABLE tag(
     id_evenement INTEGER,
     id_utilisateur INTEGER,
-    id_tag INTEGER NOT NULL,
+    id_mot_clef INTEGER,
+    id_lieu INTEGER,
     FOREIGN KEY (id_evenement) REFERENCES evenement(id),
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_tag) REFERENCES tag(id),
-    UNIQUE(id_evenement, id_tag)
+    FOREIGN KEY (id_mot_clef) REFERENCES mot_clef(id),
+    FOREIGN KEY (id_lieu) REFERENCES lieu(id),
+    UNIQUE(id_evenement, id_tag),
+    CHECK (
+        (id_mot_clef IS NOT NULL OR id_lieu IS NOT NULL) AND
+        (id_evenement IS NOT NULL OR id_utilisateur IS NOT NULL)
+    )
 );
 
 -- Application 1 : Netflix
