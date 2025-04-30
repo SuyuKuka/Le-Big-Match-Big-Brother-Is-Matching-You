@@ -1,4 +1,44 @@
+-- Drop tables
 
+DROP TABLE IF EXISTS utilisateur CASCADE;
+DROP TABLE IF EXISTS formulaire CASCADE;
+DROP TABLE IF EXISTS formulaire_personnel CASCADE;
+DROP TABLE IF EXISTS formulaire_residence CASCADE;
+DROP TABLE IF EXISTS formulaire_sexualite CASCADE;
+DROP TABLE IF EXISTS formulaire_physique CASCADE;
+DROP TABLE IF EXISTS abonne CASCADE;
+DROP TABLE IF EXISTS match CASCADE;
+DROP TABLE IF EXISTS suggestion_match CASCADE;
+DROP TABLE IF EXISTS interaction_match CASCADE;
+DROP TABLE IF EXISTS historique_match CASCADE;
+DROP TABLE IF EXISTS chat CASCADE;
+DROP TABLE IF EXISTS message CASCADE;
+DROP TABLE IF EXISTS evenement CASCADE;
+DROP TABLE IF EXISTS suggestion_evenement CASCADE;
+DROP TABLE IF EXISTS interaction_evenement CASCADE;
+DROP TABLE IF EXISTS historique_evenement CASCADE;
+DROP TABLE IF EXISTS lieu CASCADE;
+DROP TABLE IF EXISTS categorie CASCADE;
+DROP TABLE IF EXISTS sous_categorie CASCADE;
+DROP TABLE IF EXISTS mot_clef CASCADE;
+DROP TABLE IF EXISTS tag CASCADE;
+DROP TABLE IF EXISTS tag_utilisateur CASCADE;
+DROP TABLE IF EXISTS tag_evenement CASCADE;
+DROP TABLE IF EXISTS oeuvre CASCADE;
+DROP TABLE IF EXISTS artiste CASCADE;
+DROP TABLE IF EXISTS genre CASCADE;
+DROP TABLE IF EXISTS oeuvre_vue CASCADE;
+DROP TABLE IF EXISTS traces_numeriques CASCADE;
+DROP TABLE IF EXISTS spotify CASCADE;
+DROP TABLE IF EXISTS netflix CASCADE;
+
+-- Drop types
+
+DROP TYPE IF EXISTS TYPE_ABONNEMENT;
+DROP TYPE IF EXISTS STATUT_MATCH;
+DROP TYPE IF EXISTS TYPE_INTERACTION_MATCH;
+DROP TYPE IF EXISTS STATUT_EVENEMENT;
+DROP TYPE IF EXISTS TYPE_INTERACTION_EVENEMENT;
 
 -- Utilisateurs
 
@@ -63,6 +103,17 @@ CREATE TABLE abonne(
 
 -- Match, chat, suggestion et interaction
 
+CREATE TYPE STATUT_MATCH AS ENUM ('EN_ATTENTE', 'EN_COURS', 'TERMINE');
+
+-- Si les deux utilisateurs se sont LIKE mutuellement, dans ce cas le statut est EN_COURS, sinon TERMINE de maniere automatique
+CREATE TABLE match (
+    id SERIAL PRIMARY KEY,
+    id_interaction INTEGER NOT NULL,
+    statut STATUT_MATCH NOT NULL DEFAULT 'EN_ATTENTE',
+    FOREIGN KEY (id_interaction) REFERENCES interaction_match(id),
+    UNIQUE (id_interaction)
+);
+
 CREATE TABLE suggestion_match(
     id SERIAL PRIMARY KEY,
     id_utilisateur INTEGER NOT NULL,
@@ -81,17 +132,6 @@ CREATE TABLE interaction_match(
     type TYPE_INTERACTION_MATCH NOT NULL,
     actif BOOLEAN NOT NULL DEFAULT true, -- permet d'annuler l'interaction (seulement les abonnés)
     FOREIGN KEY (id_suggestion_match) REFERENCES suggestion_match(id)
-);
-
-CREATE TYPE STATUT_MATCH AS ENUM ('EN_ATTENTE', 'EN_COURS', 'TERMINE');
-
--- Si les deux utilisateurs se sont LIKE mutuellement, dans ce cas le statut est EN_COURS, sinon TERMINE de maniere automatique
-CREATE TABLE match (
-    id SERIAL PRIMARY KEY,
-    id_interaction INTEGER NOT NULL,
-    statut STATUT_MATCH NOT NULL DEFAULT 'EN_ATTENTE',
-    FOREIGN KEY (id_interaction) REFERENCES interaction_match(id),
-    UNIQUE (id_interaction)
 );
 
 CREATE TABLE historique_match(
@@ -120,7 +160,7 @@ CREATE TABLE message(
 );
 
 -- Evenements
-CREATE TYPE statut_evenement AS ENUM ('TERMINE', 'EN_COURS', 'FUTUR');
+CREATE TYPE STATUT_EVENEMENT AS ENUM ('TERMINE', 'EN_COURS', 'FUTUR');
 
 CREATE TABLE evenement(
     id SERIAL PRIMARY KEY,
@@ -132,6 +172,17 @@ CREATE TABLE evenement(
     statut STATUT_EVENEMENT NOT NULL,
     id_annonceur INTEGER,
     FOREIGN KEY (id_annonceur) REFERENCES utilisateur(id),
+);
+
+CREATE TABLE suggestion_evenement(
+    id SERIAL PRIMARY KEY,
+    id_utilisateur INTEGER NOT NULL,
+    id_evenement INTEGER NOT NULL,
+    id_oeuvre_vu INTEGER NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
+    FOREIGN KEY (id_evenement) REFERENCES evenement(id),
+    FOREIGN KEY (id_oeuvre_vu) REFERENCES oeuvre_vue(id),
+    UNIQUE(id_utilisateur, id_evenement, id_oeuvre_vu)
 );
 
 CREATE TYPE TYPE_INTERACTION_EVENEMENT AS ENUM ('Intéresser', 'Participer');
@@ -153,17 +204,6 @@ CREATE TABLE historique_evenement(
     FOREIGN KEY (id_evenement) REFERENCES evenement(id),
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
     UNIQUE(id_evenement, id_utilisateur)
-);
-
-CREATE TABLE suggestion_evenement(
-    id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER NOT NULL,
-    id_evenement INTEGER NOT NULL,
-    id_oeuvre_vu INTEGER NOT NULL,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY (id_evenement) REFERENCES evenement(id),
-    FOREIGN KEY (id_oeuvre_vu) REFERENCES oeuvre_vue(id),
-    UNIQUE(id_utilisateur, id_evenement, id_oeuvre_vu)
 );
 
 -- Tags
