@@ -1,3 +1,10 @@
+-- Database
+
+DROP DATABASE IF EXISTS chen_chiv;
+CREATE DATABASE chen_chiv;
+
+\c chen_chiv
+
 -- Drop tables
 
 DROP TABLE IF EXISTS utilisateur CASCADE;
@@ -9,27 +16,27 @@ DROP TABLE IF EXISTS formulaire_physique CASCADE;
 DROP TABLE IF EXISTS abonne CASCADE;
 DROP TABLE IF EXISTS match CASCADE;
 DROP TABLE IF EXISTS suggestion_match CASCADE;
+DROP TABLE IF EXISTS "like" CASCADE;
+DROP TABLE IF EXISTS nope CASCADE;
 DROP TABLE IF EXISTS historique_match CASCADE;
 DROP TABLE IF EXISTS chat CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS evenement CASCADE;
-DROP TABLE IF EXISTS interaction_suggestion_evenement CASCADE;
 DROP TABLE IF EXISTS suggestion_evenement CASCADE;
-DROP TABLE IF EXISTS like CASCADE;
-DROP TABLE IF EXISTS nope CASCADE;
+DROP TABLE IF EXISTS interaction_suggestion_evenement CASCADE;
 DROP TABLE IF EXISTS historique_evenement CASCADE;
 DROP TABLE IF EXISTS tag CASCADE;
 DROP TABLE IF EXISTS lieu CASCADE;
-DROP TABLE IF EXISTS mot_clef CASCADE;
-DROP TABLE IF EXISTS sous_categorie CASCADE;
 DROP TABLE IF EXISTS categorie CASCADE;
+DROP TABLE IF EXISTS sous_categorie CASCADE;
+DROP TABLE IF EXISTS mot_clef CASCADE;
+DROP TABLE IF EXISTS traces_numeriques CASCADE;
+DROP TABLE IF EXISTS spotify CASCADE;
+DROP TABLE IF EXISTS netflix CASCADE;
 DROP TABLE IF EXISTS oeuvre CASCADE;
 DROP TABLE IF EXISTS artiste CASCADE;
 DROP TABLE IF EXISTS genre CASCADE;
 DROP TABLE IF EXISTS oeuvre_vue CASCADE;
-DROP TABLE IF EXISTS traces_numeriques CASCADE;
-DROP TABLE IF EXISTS spotify CASCADE;
-DROP TABLE IF EXISTS netflix CASCADE;
 
 -- Drop types
 
@@ -102,14 +109,17 @@ CREATE TABLE abonne(
 
 -- Match
 
-CREATE TYPE STATUT_MATCH AS ENUM ('EN_ATTENTE', 'EN_COURS', 'TERMINE');
+CREATE TYPE STATUT_MATCH AS ENUM ('EN_COURS', 'TERMINE');
 
--- Si les deux utilisateurs se sont LIKE mutuellement, dans ce cas le statut est EN_COURS
 CREATE TABLE match (
     id SERIAL PRIMARY KEY,
-    id_like INTEGER NOT NULL,
-    statut STATUT_MATCH NOT NULL DEFAULT 'EN_ATTENTE',
-    FOREIGN KEY(id_like) REFERENCES like(id)
+    id_utilisateur_source INTEGER NOT NULL,
+    id_utilisateur_cible INTEGER NOT NULL,
+    statut STATUT_MATCH NOT NULL DEFAULT 'EN_COURS',
+    FOREIGN KEY(id_utilisateur_source) REFERENCES utilisateur(id),
+    FOREIGN KEY(id_utilisateur_cible) REFERENCES utilisateur(id),
+    UNIQUE(id_utilisateur_source, id_utilisateur_cible),
+    CHECK(id_utilisateur_source < id_utilisateur_cible)
 );
 
 CREATE TABLE suggestion_match(
@@ -122,7 +132,7 @@ CREATE TABLE suggestion_match(
     CHECK(id_utilisateur < id_utilisateur_cible)
 );
 
-CREATE TABLE like(
+CREATE TABLE "like"(
     id SERIAL PRIMARY KEY,
     id_utilisateur INTEGER NOT NULL,
     id_suggestion_match INTEGER NOT NULL,
@@ -162,7 +172,6 @@ CREATE TABLE message(
     id SERIAL PRIMARY KEY,
     id_chat INTEGER NOT NULL,
     id_utilisateur_source INTEGER NOT NULL, -- Pour savoir qui a envoyé le message
-    -- id_utilisateur_dest INTEGER NOT NULL, -- utile?
     contenu TEXT NOT NULL,
     date TIMESTAMP NOT NULL,
     FOREIGN KEY(id_chat) REFERENCES chat(id) ON DELETE CASCADE
@@ -184,6 +193,15 @@ CREATE TABLE evenement(
     FOREIGN KEY(id_annonceur) REFERENCES utilisateur(id)
 );
 
+CREATE TABLE suggestion_evenement(
+    id SERIAL PRIMARY KEY,
+    id_utilisateur INTEGER NOT NULL,
+    id_evenement INTEGER NOT NULL,
+    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
+    FOREIGN KEY(id_evenement) REFERENCES evenement(id),
+    UNIQUE(id_utilisateur, id_evenement)
+);
+
 CREATE TYPE TYPE_INTERACTION AS ENUM ('INTERESSER', 'PARTICIPER');
 
 CREATE TABLE interaction_suggestion_evenement(
@@ -194,15 +212,6 @@ CREATE TABLE interaction_suggestion_evenement(
     FOREIGN KEY(id_suggestion_evenement) REFERENCES suggestion_evenement(id),
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     UNIQUE(id_suggestion_evenement, id_utilisateur)
-)
-
-CREATE TABLE suggestion_evenement(
-    id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER NOT NULL,
-    id_evenement INTEGER NOT NULL,
-    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
-    FOREIGN KEY(id_evenement) REFERENCES evenement(id),
-    UNIQUE(id_utilisateur, id_evenement)
 );
 
 CREATE TABLE historique_evenement(
@@ -237,14 +246,10 @@ CREATE TABLE lieu(
     UNIQUE(adresse, code_postal, pays)
 );
 
-CREATE TABLE mot_clef(
+CREATE TABLE categorie(
     id SERIAL PRIMARY KEY,
-    id_tag INTEGER NOT NULL,
-    id_sous_categorie INTEGER NOT NULL,
-    mot VARCHAR(24) NOT NULL,
-    FOREIGN KEY(id_tag) REFERENCES tag(id),
-    FOREIGN KEY(id_sous_categorie) REFERENCES sous_categorie(id) ON DELETE CASCADE,
-    UNIQUE(mot)
+    nom VARCHAR(24) UNIQUE NOT NULL,
+    UNIQUE(nom)
 );
 
 CREATE TABLE sous_categorie(
@@ -255,10 +260,14 @@ CREATE TABLE sous_categorie(
     UNIQUE(id_categorie, nom)
 );
 
-CREATE TABLE categorie(
+CREATE TABLE mot_clef(
     id SERIAL PRIMARY KEY,
-    nom VARCHAR(24) UNIQUE NOT NULL,
-    UNIQUE(nom)
+    id_tag INTEGER NOT NULL,
+    id_sous_categorie INTEGER NOT NULL,
+    mot VARCHAR(24) NOT NULL,
+    FOREIGN KEY(id_tag) REFERENCES tag(id),
+    FOREIGN KEY(id_sous_categorie) REFERENCES sous_categorie(id) ON DELETE CASCADE,
+    UNIQUE(mot)
 );
 
 -- Traces numérique

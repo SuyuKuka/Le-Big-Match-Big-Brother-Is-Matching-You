@@ -1,0 +1,1 @@
+\copy utilisateur FROM 'data/utilisateur.csv' WITH (FORMAT csv, HEADER);
