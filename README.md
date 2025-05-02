@@ -6,6 +6,7 @@
 
 # Mode d'emploi
 
+Lors du premier lancement:
 ```
 psql -U username
 
@@ -16,6 +17,15 @@ psql -U username
 \i src/create.sql
 \i src/insert.sql
 \i src/select.sql
+```
+
+Sinon:
+```
+psql -U postgres -d chen_chiv
+
+\pset pager off
+
+\cd src
 ```
 
 ## Membres

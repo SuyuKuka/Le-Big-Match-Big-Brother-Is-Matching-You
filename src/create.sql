@@ -41,7 +41,6 @@ DROP TABLE IF EXISTS oeuvre_vue CASCADE;
 -- Drop types
 
 DROP TYPE IF EXISTS TYPE_ABONNEMENT;
-DROP TYPE IF EXISTS STATUT_MATCH;
 DROP TYPE IF EXISTS STATUT_EVENEMENT;
 DROP TYPE IF EXISTS TYPE_INTERACTION;
 
@@ -50,11 +49,10 @@ DROP TYPE IF EXISTS TYPE_INTERACTION;
 CREATE TABLE utilisateur(
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(32) NOT NULL,
-    age INT NOT NULL,
-    CHECK(age > 17)
+    mot_de_passe VARCHAR(64) NOT NULL
 );
 
--- Formulaires à l'inscription
+-- Formulaires
 
 CREATE TABLE formulaire(
     id SERIAL PRIMARY KEY,
@@ -66,15 +64,17 @@ CREATE TABLE formulaire_personnel(
     id_formulaire INTEGER NOT NULL,
     photo VARCHAR(64) NOT NULL,
     prenom VARCHAR(64) NOT NULL,
+    age INT NOT NULL,
     email VARCHAR(64) NOT NULL,
-    telephone VARCHAR(16) NOT NULL,
-    FOREIGN KEY(id_formulaire) REFERENCES formulaire(id)
+    numero_de_telephone VARCHAR(16) NOT NULL,
+    FOREIGN KEY(id_formulaire) REFERENCES formulaire(id),
+    CHECK(age > 17)
 );
 
 CREATE TABLE formulaire_residence(
     id_formulaire INTEGER NOT NULL,
-    ville VARCHAR(64) NOT NULL,
     pays VARCHAR(64) NOT NULL,
+    ville VARCHAR(64) NOT NULL,
     FOREIGN KEY(id_formulaire) REFERENCES formulaire(id)
 );
 
@@ -109,17 +109,14 @@ CREATE TABLE abonne(
 
 -- Match
 
-CREATE TYPE STATUT_MATCH AS ENUM ('EN_COURS', 'TERMINE');
-
 CREATE TABLE match (
     id SERIAL PRIMARY KEY,
-    id_utilisateur_source INTEGER NOT NULL,
-    id_utilisateur_cible INTEGER NOT NULL,
-    statut STATUT_MATCH NOT NULL DEFAULT 'EN_COURS',
-    FOREIGN KEY(id_utilisateur_source) REFERENCES utilisateur(id),
-    FOREIGN KEY(id_utilisateur_cible) REFERENCES utilisateur(id),
-    UNIQUE(id_utilisateur_source, id_utilisateur_cible),
-    CHECK(id_utilisateur_source < id_utilisateur_cible)
+    id_utilisateur1 INTEGER NOT NULL,
+    id_utilisateur2 INTEGER NOT NULL,
+    FOREIGN KEY(id_utilisateur1) REFERENCES utilisateur(id),
+    FOREIGN KEY(id_utilisateur2) REFERENCES utilisateur(id),
+    UNIQUE(id_utilisateur1, id_utilisateur2),
+    CHECK(id_utilisateur1 <> id_utilisateur2)
 );
 
 CREATE TABLE suggestion_match(
@@ -128,14 +125,13 @@ CREATE TABLE suggestion_match(
     id_utilisateur_cible INTEGER NOT NULL,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     FOREIGN KEY(id_utilisateur_cible) REFERENCES utilisateur(id),
-    UNIQUE(id_utilisateur, id_utilisateur_cible),
-    CHECK(id_utilisateur < id_utilisateur_cible)
+    UNIQUE(id_utilisateur, id_utilisateur_cible)
 );
 
 CREATE TABLE "like"(
     id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER NOT NULL,
     id_suggestion_match INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT NULL,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     FOREIGN KEY(id_suggestion_match) REFERENCES suggestion_match(id),
     UNIQUE(id_utilisateur, id_suggestion_match)
@@ -143,8 +139,8 @@ CREATE TABLE "like"(
 
 CREATE TABLE nope(
     id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER NOT NULL,
     id_suggestion_match INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT NULL,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     FOREIGN KEY(id_suggestion_match) REFERENCES suggestion_match(id),
     UNIQUE(id_utilisateur, id_suggestion_match)
@@ -155,15 +151,14 @@ CREATE TABLE historique_match(
     id_match INTEGER NOT NULL,
     id_utilisateur INTEGER NOT NULL,
     FOREIGN KEY(id_match) REFERENCES match(id),
-    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
-    UNIQUE(id_match, id_utilisateur)
+    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE chat(
     id SERIAL PRIMARY KEY,
     id_match INTEGER,
     id_historique_match INTEGER,
-    FOREIGN KEY(id_match) REFERENCES match(id),
+    FOREIGN KEY(id_match) REFERENCES match(id) ON DELETE SET NULL,
     FOREIGN KEY(id_historique_match) REFERENCES historique_match(id) ON DELETE CASCADE,
     UNIQUE(id_match, id_historique_match)
 );
