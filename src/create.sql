@@ -37,7 +37,9 @@ DROP TABLE IF EXISTS spotify CASCADE;
 DROP TABLE IF EXISTS netflix CASCADE;
 DROP TABLE IF EXISTS oeuvre CASCADE;
 DROP TABLE IF EXISTS artiste CASCADE;
+DROP TABLE IF EXISTS artiste_oeuvre CASCADE;
 DROP TABLE IF EXISTS genre CASCADE;
+DROP TABLE IF EXISTS genre_oeuvre CASCADE;
 DROP TABLE IF EXISTS oeuvre_vue CASCADE;
 
 -- Drop types
@@ -302,32 +304,45 @@ CREATE TABLE netflix(
 
 CREATE TABLE oeuvre(
     id SERIAL PRIMARY KEY,
-    titre TEXT NOT NULL,
     id_traces_numeriques INTEGER NOT NULL,
+    titre TEXT NOT NULL,
     FOREIGN KEY(id_traces_numeriques) REFERENCES traces_numeriques(id)
 );
 
 CREATE TABLE artiste(
     id SERIAL PRIMARY KEY,
+    nom TEXT NOT NULL
+);
+
+CREATE TABLE artiste_oeuvre(
+    id SERIAL PRIMARY KEY,
     id_oeuvre INTEGER NOT NULL,
-    nom TEXT NOT NULL,
-    FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id)
+    id_artiste INTEGER NOT NULL,
+    FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id),
+    FOREIGN KEY(id_artiste) REFERENCES artiste(id)
 );
 
 CREATE TABLE genre(
     id SERIAL PRIMARY KEY,
-    id_oeuvre INTEGER NOT NULL,
     nom TEXT NOT NULL,
-    FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id)
+    UNIQUE(nom)
+);
+
+CREATE TABLE genre_oeuvre(
+    id SERIAL PRIMARY KEY,
+    id_oeuvre INTEGER NOT NULL,
+    id_genre INTEGER NOT NULL,
+    FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id),
+    FOREIGN KEY(id_genre) REFERENCES genre(id),
+    UNIQUE(id_oeuvre, id_genre)
 );
 
 CREATE TABLE oeuvre_vue(
     id SERIAL PRIMARY KEY,
     id_utilisateur INTEGER NOT NULL,
     id_oeuvre INTEGER NOT NULL,
-    id_suggestion_evenement INTEGER,
     note INTEGER,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id),
-    FOREIGN KEY(id_suggestion_evenement) REFERENCES suggestion_evenement(id)
+    UNIQUE(id_utilisateur, id_oeuvre)
 );

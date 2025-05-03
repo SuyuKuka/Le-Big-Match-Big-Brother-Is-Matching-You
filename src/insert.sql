@@ -48,7 +48,9 @@
 \copy traces_numeriques FROM 'data/traces_numeriques.csv' WITH (FORMAT csv, HEADER);
 \copy spotify FROM 'data/spotify.csv' WITH (FORMAT csv, HEADER);
 \copy netflix FROM 'data/netflix.csv' WITH (FORMAT csv, HEADER);
--- \copy oeuvre FROM 'data/oeuvre.csv' WITH (FORMAT csv, HEADER);
--- \copy artiste FROM 'data/artiste.csv' WITH (FORMAT csv, HEADER);
--- \copy genre FROM 'data/genre.csv' WITH (FORMAT csv, HEADER);
--- \copy oeuvre_vue FROM 'data/oeuvre_vue.csv' WITH (FORMAT csv, HEADER);
+\copy oeuvre FROM 'data/oeuvre.csv' WITH (FORMAT csv, HEADER);
+\copy artiste FROM 'data/artiste.csv' WITH (FORMAT csv, HEADER);
+\copy artiste_oeuvre FROM 'data/artiste_oeuvre.csv' WITH (FORMAT csv, HEADER);
+\copy genre FROM 'data/genre.csv' WITH (FORMAT csv, HEADER);
+\copy genre_oeuvre FROM 'data/genre_oeuvre.csv' WITH (FORMAT csv, HEADER);
+\copy oeuvre_vue FROM 'data/oeuvre_vue.csv' WITH (FORMAT csv, HEADER);
