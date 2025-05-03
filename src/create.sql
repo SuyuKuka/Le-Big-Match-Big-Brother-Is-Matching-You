@@ -26,6 +26,8 @@ DROP TABLE IF EXISTS suggestion_evenement CASCADE;
 DROP TABLE IF EXISTS interaction_suggestion_evenement CASCADE;
 DROP TABLE IF EXISTS historique_evenement CASCADE;
 DROP TABLE IF EXISTS tag CASCADE;
+DROP TABLE IF EXISTS utilisateur_tag CASCADE;
+DROP TABLE IF EXISTS evenement_tag CASCADE;
 DROP TABLE IF EXISTS lieu CASCADE;
 DROP TABLE IF EXISTS categorie CASCADE;
 DROP TABLE IF EXISTS sous_categorie CASCADE;
@@ -178,13 +180,13 @@ CREATE TYPE STATUT_EVENEMENT AS ENUM ('TERMINE', 'EN_COURS', 'FUTUR');
 
 CREATE TABLE evenement(
     id SERIAL PRIMARY KEY,
+    id_annonceur INTEGER,
     titre TEXT NOT NULL,
     description TEXT NOT NULL,
     date timestamp NOT NULL,
-    organisateur TEXT NOT NULL,
+    organisateur TEXT,
     prix INTEGER NOT NULL,
-    statut STATUT_EVENEMENT NOT NULL,
-    id_annonceur INTEGER,
+    statut_evenement STATUT_EVENEMENT NOT NULL,
     FOREIGN KEY(id_annonceur) REFERENCES utilisateur(id)
 );
 
@@ -203,7 +205,7 @@ CREATE TABLE interaction_suggestion_evenement(
     id SERIAL PRIMARY KEY,
     id_suggestion_evenement INTEGER NOT NULL,
     id_utilisateur INTEGER NOT NULL,
-    statut TYPE_INTERACTION NOT NULL,
+    type_interaction TYPE_INTERACTION NOT NULL,
     FOREIGN KEY(id_suggestion_evenement) REFERENCES suggestion_evenement(id),
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     UNIQUE(id_suggestion_evenement, id_utilisateur)
@@ -211,46 +213,57 @@ CREATE TABLE interaction_suggestion_evenement(
 
 CREATE TABLE historique_evenement(
     id SERIAL PRIMARY KEY,
-    id_evenement INTEGER NOT NULL,
     id_utilisateur INTEGER NOT NULL,
-    FOREIGN KEY(id_evenement) REFERENCES evenement(id),
+    id_evenement INTEGER NOT NULL,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
+    FOREIGN KEY(id_evenement) REFERENCES evenement(id),
     UNIQUE(id_evenement, id_utilisateur)
 );
 
 -- Tags
 
 CREATE TABLE tag(
+    id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE utilisateur_tag(
     id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER,
-    id_evenement INTEGER,
+    id_tag INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT NULL,
+    FOREIGN KEY(id_tag) REFERENCES tag(id),
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
+    UNIQUE(id_tag, id_utilisateur)
+);
+
+CREATE TABLE evenement_tag(
+    id SERIAL PRIMARY KEY,
+    id_tag INTEGER NOT NULL,
+    id_evenement INTEGER NOT NULL,
+    FOREIGN KEY(id_tag) REFERENCES tag(id),
     FOREIGN KEY(id_evenement) REFERENCES evenement(id),
-    UNIQUE(id_utilisateur, id_evenement),
-    CHECK(id_utilisateur IS NOT NULL OR id_evenement IS NOT NULL)
+    UNIQUE(id_tag, id_evenement)
 );
 
 CREATE TABLE lieu(
     id SERIAL PRIMARY KEY,
     id_tag INTEGER NOT NULL,
-    nom TEXT,
     adresse TEXT NOT NULL,
     code_postal TEXT NOT NULL,
     pays TEXT NOT NULL,
     FOREIGN KEY(id_tag) REFERENCES tag(id),
-    UNIQUE(adresse, code_postal, pays)
+    UNIQUE(adresse)
 );
 
 CREATE TABLE categorie(
     id SERIAL PRIMARY KEY,
-    nom VARCHAR(24) UNIQUE NOT NULL,
+    nom VARCHAR(32) UNIQUE NOT NULL,
     UNIQUE(nom)
 );
 
 CREATE TABLE sous_categorie(
     id SERIAL PRIMARY KEY,
     id_categorie INTEGER NOT NULL,
-    nom VARCHAR(24) NOT NULL,
+    nom VARCHAR(32) NOT NULL,
     FOREIGN KEY(id_categorie) REFERENCES categorie(id) ON DELETE CASCADE,
     UNIQUE(id_categorie, nom)
 );
@@ -259,13 +272,13 @@ CREATE TABLE mot_clef(
     id SERIAL PRIMARY KEY,
     id_tag INTEGER NOT NULL,
     id_sous_categorie INTEGER NOT NULL,
-    mot VARCHAR(24) NOT NULL,
+    mot VARCHAR(32) NOT NULL,
     FOREIGN KEY(id_tag) REFERENCES tag(id),
     FOREIGN KEY(id_sous_categorie) REFERENCES sous_categorie(id) ON DELETE CASCADE,
     UNIQUE(mot)
 );
 
--- Traces numérique
+-- Traces numériques
 
 CREATE TABLE traces_numeriques(
     id SERIAL PRIMARY KEY,
@@ -313,6 +326,7 @@ CREATE TABLE oeuvre_vue(
     id_utilisateur INTEGER NOT NULL,
     id_oeuvre INTEGER NOT NULL,
     id_suggestion_evenement INTEGER,
+    note INTEGER,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
     FOREIGN KEY(id_oeuvre) REFERENCES oeuvre(id),
     FOREIGN KEY(id_suggestion_evenement) REFERENCES suggestion_evenement(id)

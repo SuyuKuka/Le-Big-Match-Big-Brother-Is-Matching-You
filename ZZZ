@@ -5,25 +5,27 @@ formulaire_residence ✅
 formulaire_sexualite ✅ 
 formulaire_physique ✅
 abonne ✅
-match ✅
+match ✅ .
 suggestion_match ✅
 "like" ✅
 nope ✅
 historique_match ✅
 chat ✅
 message ✅
-evenement
-suggestion_evenement
-interaction_suggestion_evenement
-historique_evenement
-tag
-lieu
-categorie
-sous_categorie
-mot_clef
-traces_numeriques
-spotify
-netflix
+evenement ✅
+suggestion_evenement ✅
+interaction_suggestion_evenement ✅
+historique_evenement ✅
+tag ✅
+utilisateur tag ✅
+evenement tag ✅
+lieu ✅
+categorie ✅
+sous_categorie ✅
+mot_clef ✅
+traces_numeriques ✅
+spotify ✅
+netflix ✅
 oeuvre
 artiste
 genre
