@@ -163,7 +163,7 @@ CREATE TABLE chat(
     id_match INTEGER,
     id_historique_match INTEGER,
     FOREIGN KEY(id_match) REFERENCES match(id) ON DELETE SET NULL,
-    FOREIGN KEY(id_historique_match) REFERENCES historique_match(id) ON DELETE CASCADE,
+    FOREIGN KEY(id_historique_match) REFERENCES historique_match(id) ON DELETE SET NULL,
     UNIQUE(id_match, id_historique_match)
 );
 
