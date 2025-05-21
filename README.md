@@ -14,9 +14,9 @@ psql -U username
 
 \cd src
 
-\i src/create.sql
-\i src/insert.sql
-\i src/select.sql
+\i create.sql
+\i insert.sql
+\i select.sql
 ```
 
 Sinon:

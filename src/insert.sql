@@ -17,10 +17,6 @@
 -- Match
 
 \copy match FROM 'data/match.csv' WITH (FORMAT csv, HEADER);
-\copy suggestion_match FROM 'data/suggestion_match.csv' WITH (FORMAT csv, HEADER);
-\copy "like" FROM 'data/like.csv' WITH (FORMAT csv, HEADER);
-\copy nope FROM 'data/nope.csv' WITH (FORMAT csv, HEADER);
-\copy historique_match FROM 'data/historique_match.csv' WITH (FORMAT csv, HEADER);
 \copy chat FROM 'data/chat.csv' WITH (FORMAT csv, HEADER);
 \copy message FROM 'data/message.csv' WITH (FORMAT csv, HEADER);
 
@@ -28,8 +24,6 @@
 
 \copy evenement FROM 'data/evenement.csv' WITH (FORMAT csv, HEADER);
 \copy suggestion_evenement FROM 'data/suggestion_evenement.csv' WITH (FORMAT csv, HEADER);
-\copy interaction_suggestion_evenement FROM 'data/interaction_suggestion_evenement.csv' WITH (FORMAT csv, HEADER);
-\copy historique_evenement FROM 'data/historique_evenement.csv' WITH (FORMAT csv, HEADER);
 
 -- Tag
 
@@ -46,9 +40,7 @@
 \copy traces_numeriques FROM 'data/traces_numeriques.csv' WITH (FORMAT csv, HEADER);
 \copy spotify FROM 'data/spotify.csv' WITH (FORMAT csv, HEADER);
 \copy netflix FROM 'data/netflix.csv' WITH (FORMAT csv, HEADER);
-\copy oeuvre FROM 'data/oeuvre.csv' WITH (FORMAT csv, HEADER);
-\copy artiste FROM 'data/artiste.csv' WITH (FORMAT csv, HEADER);
-\copy artiste_oeuvre FROM 'data/artiste_oeuvre.csv' WITH (FORMAT csv, HEADER);
-\copy genre FROM 'data/genre.csv' WITH (FORMAT csv, HEADER);
-\copy genre_oeuvre FROM 'data/genre_oeuvre.csv' WITH (FORMAT csv, HEADER);
 \copy oeuvre_vue FROM 'data/oeuvre_vue.csv' WITH (FORMAT csv, HEADER);
+\copy artiste_prefere FROM 'data/artiste_prefere.csv' WITH (FORMAT csv, HEADER);
+\copy genre FROM 'data/genre.csv' WITH (FORMAT csv, HEADER);
+\copy genre_oeuvre_vue FROM 'data/genre_oeuvre_vue.csv' WITH (FORMAT csv, HEADER);

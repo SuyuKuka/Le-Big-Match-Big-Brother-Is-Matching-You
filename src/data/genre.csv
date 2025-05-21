@@ -1,101 +1,11 @@
 id,nom
 1,Pop
-2,Rock
-3,Hip-Hop
-4,Rap
-5,Jazz
-6,Blues
+2,Horreur
+3,Science-fiction
+4,Rock
+5,Techno
+6,Action
 7,Classique
-8,Country
-9,Reggae
-10,Électro
-11,House
-12,Techno
-13,Trap
-14,Soul
-15,Funk
-16,Disco
-17,Métal
-18,Punk
-19,K-Pop
-20,R&B
-21,Gospel
-22,Ska
-23,Lo-fi
-24,Drum and Bass
-25,Indie
-26,Action
-27,Aventure
-28,Drame
-29,Comédie
-30,Thriller
-31,Horreur
-32,Science-fiction
-33,Fantastique
-34,Policier
-35,Western
-36,Film noir
-37,Romance
-38,Historique
-39,Guerre
-40,Espionnage
-41,Biopic
-42,Documentaire
-43,Animation
-44,Comédie romantique
-45,Comédie dramatique
-46,Satire
-47,Super-héros
-48,Musique / Musical
-49,Sport
-50,Film d’arts martiaux
-51,Shōnen
-52,Shōjo
-53,Seinen
-54,Josei
-55,Isekai
-56,Slice of life
-57,Mecha
-58,Harem
-59,Reverse harem
-60,Magical girl (Mahō Shōjo)
-61,Cyberpunk
-62,Space opera
-63,School life
-64,Post-apocalyptique
-65,Yaoi (Boys’ Love)
-66,Yuri (Girls’ Love)
-67,Ecchi
-68,Hentai
-69,Sports (anime)
-70,Horror (anime)
-71,Mystery
-72,Psychological
-73,Idol
-74,Game
-75,Supernatural
-76,Utopie
-77,Dystopie
-78,Road movie
-79,Found footage
-80,Mockumentaire
-81,Steampunk
-82,Heroic fantasy
-83,Dark fantasy
-84,Thriller psychologique
-85,Comédie noire
-86,Teen drama
-87,Survival
-88,Catastrophe
-89,Crime
-90,Heist (casse)
-91,Coming-of-age
-92,Time travel
-93,Low fantasy
-94,High fantasy
-95,Noir futuriste
-96,Vampires
-97,Zombies
-98,Mythologie
-99,Érotique
-100,Court-métrage
+8,Jazz
+9,Drame
+10,Comédie

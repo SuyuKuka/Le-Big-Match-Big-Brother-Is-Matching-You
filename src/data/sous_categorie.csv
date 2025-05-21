@@ -1,51 +1,5 @@
 id,id_categorie,nom
-1,1,Lecture
-2,1,Musique
-3,1,Voyage
-4,1,Cuisine
-5,1,Sport
-6,2,Introverti
-7,2,Ambitieux
-8,2,Drole
-9,2,Attentionne
-10,2,Ouvert d'esprit
-11,3,Vegetarien
-12,3,Fêtard
-13,3,Casanier
-14,3,Amateur de vin
-15,3,Parent
-16,4,Relation serieuse
-17,4,Amitie
-18,4,Relation à long terme
-19,4,Rencontres occasionnelles
-20,4,Partenaire de voyage
-21,5,Pop
-22,5,Jazz
-23,5,Electro
-24,5,Classique
-25,5,Indie
-26,6,Europe
-27,6,Asie
-28,6,Amerique du Sud
-29,6,Road trip
-30,6,Plage
-31,7,Italienne
-32,7,Japonaise
-33,7,Vegetale
-34,7,Tester de nouveaux restos
-35,7,Cuisiner ensemble
-36,8,Football
-37,8,Yoga
-38,8,Course à pied
-39,8,Sports nautiques
-40,8,Cyclisme
-41,9,Fantasy
-42,9,Thriller
-43,9,Poesie
-44,9,Histoire
-45,9,Bandes dessinees
-46,10,Humour noir
-47,10,Sarcasme
-48,10,Autoderision
-49,10,Esprit vif
-50,10,Curieux
+1,1,Habitudes Quotidiennes
+2,1,Philosophie Personnelle
+3,2,Loisirs Créatifs
+4,2,Sports & Aventures
