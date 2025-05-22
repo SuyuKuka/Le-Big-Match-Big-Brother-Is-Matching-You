@@ -99,7 +99,7 @@ CREATE TYPE TYPE_ABONNEMENT AS ENUM ('ARGENT', 'OR', 'DIAMANT');
 
 CREATE TABLE abonne(
     id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER UNIQUE NOT NULL,
+    id_utilisateur INTEGER NOT NULL,
     type_abonnement TYPE_ABONNEMENT NOT NULL,
     date_debut DATE NOT NULL,
     date_fin DATE NOT NULL,
@@ -113,12 +113,12 @@ CREATE TYPE STATUT_MATCH AS ENUM ('SUGGERER', 'LIKE', 'NOPE');
 
 CREATE TABLE match (
     id SERIAL PRIMARY KEY,
-    id_utilisateur1 INTEGER NOT NULL,
-    id_utilisateur2 INTEGER NOT NULL,
+    id_utilisateur_source INTEGER NOT NULL,
+    id_utilisateur_cible INTEGER NOT NULL,
     statut_match STATUT_MATCH NOT NULL,
-    FOREIGN KEY(id_utilisateur1) REFERENCES utilisateur(id),
-    FOREIGN KEY(id_utilisateur2) REFERENCES utilisateur(id),
-    UNIQUE(id_utilisateur1, id_utilisateur2)
+    FOREIGN KEY(id_utilisateur_source) REFERENCES utilisateur(id),
+    FOREIGN KEY(id_utilisateur_cible) REFERENCES utilisateur(id),
+    UNIQUE(id_utilisateur_source, id_utilisateur_cible)
 );
 
 
@@ -134,8 +134,8 @@ CREATE TABLE chat(
 
 CREATE TABLE message(
     id SERIAL PRIMARY KEY,
-    id_utilisateur INTEGER NOT NULL,
     id_chat INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT NULL,
     contenu TEXT NOT NULL,
     date TIMESTAMP NOT NULL,
     FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
@@ -161,7 +161,7 @@ CREATE TABLE evenement(
     date_debut timestamp NOT NULL,
     date_fin timestamp NOT NULL,
     organisateur TEXT,
-    prix INTEGER,
+    prix REAL,
     statut_evenement STATUT_EVENEMENT NOT NULL,
     FOREIGN KEY(id_utilisateur_annonceur) REFERENCES utilisateur(id)
 );
@@ -191,13 +191,13 @@ CREATE TABLE suggestion_evenement(
 
 CREATE TABLE categorie(
     id SERIAL PRIMARY KEY,
-    nom VARCHAR(32) UNIQUE NOT NULL
+    nom TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE sous_categorie(
     id SERIAL PRIMARY KEY,
     id_categorie INTEGER NOT NULL,
-    nom VARCHAR(32) NOT NULL,
+    nom TEXT NOT NULL,
     FOREIGN KEY(id_categorie) REFERENCES categorie(id) ON DELETE CASCADE,
     UNIQUE(id_categorie, nom)
 );
@@ -205,7 +205,7 @@ CREATE TABLE sous_categorie(
 CREATE TABLE tag(
     id SERIAL PRIMARY KEY,
     id_sous_categorie INTEGER NOT NULL,
-    mot_clef VARCHAR(32) NOT NULL,
+    mot_clef TEXT NOT NULL,
     FOREIGN KEY(id_sous_categorie) REFERENCES sous_categorie(id) ON DELETE CASCADE,
     UNIQUE(id_sous_categorie, mot_clef)
 );
@@ -253,7 +253,7 @@ CREATE TABLE film_note(
     id SERIAL PRIMARY KEY,
     id_film INTEGER NOT NULL,
     id_utilisateur_netflix INTEGER NOT NULL,
-    note INTEGER NOT NULL,
+    note REAL NOT NULL,
     FOREIGN KEY(id_film) REFERENCES film(id),
     FOREIGN KEY(id_utilisateur_netflix) REFERENCES utilisateur_netflix(id_utilisateur)
 );
@@ -292,9 +292,9 @@ CREATE TABLE genre_film(
 
 CREATE TABLE genre_musique(
     id SERIAL PRIMARY KEY,
+    id_genre INTEGER NOT NULL,
     id_musique INTEGER NOT NULL,
-    id_film INTEGER NOT NULL,
-    FOREIGN KEY(id_musique) REFERENCES musique(id),
-    FOREIGN KEY(id_film) REFERENCES film(id)
+    FOREIGN KEY(id_genre) REFERENCES genre(id),
+    FOREIGN KEY(id_musique) REFERENCES musique(id)
 );
 

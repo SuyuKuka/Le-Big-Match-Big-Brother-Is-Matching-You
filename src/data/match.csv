@@ -1,7 +1,0 @@
-id,id_utilisateur1,id_utilisateur2,statut_match
-1,4,10,SUGGERER
-2,1,10,SUGGERER
-3,2,10,LIKE
-4,5,8,SUGGERER
-5,9,10,SUGGERER
-6,7,9,NOPE

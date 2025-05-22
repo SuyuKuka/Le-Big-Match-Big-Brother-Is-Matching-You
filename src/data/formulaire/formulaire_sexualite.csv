@@ -1,11 +1,9 @@
-id_formulaire,genre,orientation_sexuelle
+id_utilisateur,genre,orientation_sexuelle
 1,Non-binaire,Hétérosexuel
 2,Homme,Gay
-3,Femme,Hétérosexuel
 4,Agenre,Gay
 5,Femme,Hétérosexuel
 6,Homme,Hétérosexuel
 7,Femme,Bisexuel
 8,Homme,Pansexuel
 9,Pangenre,Lesbienne
-10,Non-binaire,Hétérosexuel

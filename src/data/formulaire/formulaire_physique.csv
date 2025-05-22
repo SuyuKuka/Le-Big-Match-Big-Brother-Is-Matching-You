@@ -1,11 +1,9 @@
-id_formulaire,taille,poids,couleur_yeux,couleur_cheveux
+id_utilisateur,taille,poids,couleur_yeux,couleur_cheveux
 1,164,50,Bleu,Noir
 2,181,72,Noir,Noir
 3,152,61,Marron,Blond
-4,165,62,Marron,Roux
 5,166,55,Vert,Noir
 6,163,80,Vert,Noir
 7,177,52,Marron,Noir
 8,174,57,Noir,Noir
 9,162,56,Bleu,Noir
-10,163,68,Bleu,Brun
