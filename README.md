@@ -27,7 +27,6 @@ Pour lancer le projet :
 \i create.sql
 \i insert.sql
 \i select.sql
-
 ```
 
 ## Membres

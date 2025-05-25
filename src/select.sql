@@ -28,7 +28,7 @@ WHERE EXISTS (
 
 -- Requête 5 :
 \echo "Requête 5 : Sous-requête dans le WHERE"
-\echo "Description : Utilisateurs qui a au moins un tag de la sous-catégorie Sports."
+\echo "Description : Utilisateurs qui a au moins un tag de la sous-catégorie Sports"
 SELECT u.id, u.pseudo
 FROM utilisateur u
 WHERE u.id IN (
