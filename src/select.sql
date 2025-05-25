@@ -12,7 +12,15 @@ JOIN chat c ON c.id_utilisateur1 = u.id OR c.id_utilisateur2 = u.id;
 
 -- Requête 3 : 
 \echo "Requête 3 : Sous-requête corrélée"
-\echo "Description : "
+\echo "Description : Utilisateurs qui n'ont pas encore répondu a une suggestion d'evenement (en attente)"
+SELECT u.id, u.pseudo
+FROM utilisateur u
+WHERE EXISTS (
+    SELECT 1
+    FROM suggestion_evenement se
+    WHERE se.id_utilisateur = u.id
+        AND se.type_interaction = 'EN_ATTENTE'
+);
 
 -- Requête 4 : 
 \echo "Requête 4 : Sous-requête dans le FROM"
@@ -20,7 +28,19 @@ JOIN chat c ON c.id_utilisateur1 = u.id OR c.id_utilisateur2 = u.id;
 
 -- Requête 5 :
 \echo "Requête 5 : Sous-requête dans le WHERE"
-\echo "Description : "
+\echo "Description : Utilisateurs qui a au moins un tag de la sous-catégorie Sports."
+SELECT u.id, u.pseudo
+FROM utilisateur u
+WHERE u.id IN (
+    SELECT tu.id_utilisateur
+    FROM tag_utilisateur tu
+    WHERE tu.id_tag IN (
+        SELECT t.id
+        FROM tag t
+        JOIN sous_categorie sc ON t.id_sous_categorie = sc.id
+        WHERE sc.nom = 'Sports'
+    )
+);
 
 -- Requête 6 : 
 \echo "Requête 6 : Deux agrégats nécessitant GROUP BY et HAVING"
