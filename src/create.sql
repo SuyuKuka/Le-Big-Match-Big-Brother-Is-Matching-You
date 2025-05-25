@@ -148,6 +148,7 @@ CREATE TABLE lieu(
     id SERIAL PRIMARY KEY,
     adresse TEXT NOT NULL,
     code_postal TEXT NOT NULL,
+    ville TEXT NOT NULL,
     pays TEXT NOT NULL
 );
 
