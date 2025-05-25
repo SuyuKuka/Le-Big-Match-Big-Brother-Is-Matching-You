@@ -17,13 +17,12 @@ JOIN utilisateur u2 ON c.id_utilisateur2 = u2.id;
 -- Requête 3 : 
 \echo "Requête 3 : Sous-requête corrélée"
 \echo "Description : Utilisateurs qui n'ont pas encore répondu a une suggestion d'evenement (en attente)"
-SELECT u.id, u.pseudo
-FROM utilisateur u
-WHERE EXISTS (
-    SELECT 1
-    FROM suggestion_evenement se
-    WHERE se.id_utilisateur = u.id
-        AND se.type_interaction = 'EN_ATTENTE'
+SELECT id, pseudo
+FROM utilisateur
+WHERE id IN (
+    SELECT id_utilisateur
+    FROM suggestion_evenement
+    WHERE type_interaction = 'EN_ATTENTE'
 );
 
 -- Requête 4 : 
@@ -148,7 +147,7 @@ WHERE organisateur IS NOT NULL AND UPPER(organisateur) != 'SUBWAY';
 \echo "Description : Tous les messages envoyés dans le chat 1 dans l'ordre chronologique"
 WITH RECURSIVE
     message_init AS (
-        SELECT m.id, m.id_chat, m.id_utilisateur, m.contenu, m.date
+        SELECT m.id, m.id_chat, m.id_utilisateur, m.date
         FROM message m
         WHERE m.id_chat = 1
         ORDER BY m.date ASC
@@ -160,7 +159,7 @@ WITH RECURSIVE
 
         UNION ALL
 
-        SELECT m2.id, m2.id_chat, m2.id_utilisateur, m2.contenu, m2.date
+        SELECT m2.id, m2.id_chat, m2.id_utilisateur, m2.date
         FROM message m2
         JOIN message_heredite mc ON m2.id_chat = mc.id_chat AND m2.date > mc.date
         WHERE NOT EXISTS (
