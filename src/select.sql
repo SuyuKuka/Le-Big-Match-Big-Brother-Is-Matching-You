@@ -17,13 +17,12 @@ JOIN utilisateur u2 ON c.id_utilisateur2 = u2.id;
 -- Requête 3 : 
 \echo "Requête 3 : Sous-requête corrélée"
 \echo "Description : Utilisateurs qui n'ont pas encore répondu a une suggestion d'evenement (en attente)"
-SELECT u.id, u.pseudo
-FROM utilisateur u
-WHERE EXISTS (
-    SELECT 1
-    FROM suggestion_evenement se
-    WHERE se.id_utilisateur = u.id
-        AND se.type_interaction = 'EN_ATTENTE'
+SELECT id, pseudo
+FROM utilisateur
+WHERE id IN (
+    SELECT id_utilisateur
+    FROM suggestion_evenement
+    WHERE type_interaction = 'EN_ATTENTE'
 );
 
 -- Requête 4 : 
@@ -43,17 +42,14 @@ WHERE date_debut > NOW();
 -- Requête 5 :
 \echo "Requête 5 : Sous-requête dans le WHERE"
 \echo "Description : Utilisateurs qui a au moins un tag de la sous-catégorie Sports"
-SELECT u.id, u.pseudo
-FROM utilisateur u
-WHERE u.id IN (
+SELECT id, pseudo
+FROM utilisateur
+WHERE id IN (
     SELECT tu.id_utilisateur
     FROM tag_utilisateur tu
-    WHERE tu.id_tag IN (
-        SELECT t.id
-        FROM tag t
-        JOIN sous_categorie sc ON t.id_sous_categorie = sc.id
-        WHERE sc.nom = 'Sports'
-    )
+    JOIN tag t ON tu.id_tag = t.id
+    JOIN sous_categorie sc ON t.id_sous_categorie = sc.id
+    WHERE sc.nom = 'Sports'
 );
 
 -- Requête 6 : 
@@ -82,7 +78,12 @@ HAVING COUNT(*) >= 2;
 
 -- Requête 8 : 
 \echo "Requête 8 : Jointure externe (LEFT JOIN, RIGHT JOIN ou FULL JOIN)"
-\echo "Description : "
+\echo "Description : Donne la liste des utilisateurs ainsi que leurs abonnements"
+SELECT 
+    u.id AS utilisateur_id, u.pseudo, a.id AS abonnement_id,
+    a.type_abonnement, a.date_debut, a.date_fin
+FROM utilisateur u
+FULL JOIN abonne a ON u.id = a.id_utilisateur;
 
 -- Requête 9 : 
 \echo "Requête 9 : 1. Requête équivalente exprimant une condition de totalité avec sous requêtes corrélées"
@@ -143,10 +144,10 @@ WHERE organisateur IS NOT NULL AND UPPER(organisateur) != 'SUBWAY';
 
 -- Requête 15 : 
 \echo "Requête 15 : Requête récursive"
-\echo "Description : Messages envoyés dans le chat 1 dans l'odre chronologique"
+\echo "Description : Tous les messages envoyés dans le chat 1 dans l'ordre chronologique"
 WITH RECURSIVE
     message_init AS (
-        SELECT m.id, m.id_chat, m.id_utilisateur, m.contenu, m.date
+        SELECT m.id, m.id_chat, m.id_utilisateur, m.date
         FROM message m
         WHERE m.id_chat = 1
         ORDER BY m.date ASC
@@ -158,7 +159,7 @@ WITH RECURSIVE
 
         UNION ALL
 
-        SELECT m2.id, m2.id_chat, m2.id_utilisateur, m2.contenu, m2.date
+        SELECT m2.id, m2.id_chat, m2.id_utilisateur, m2.date
         FROM message m2
         JOIN message_heredite mc ON m2.id_chat = mc.id_chat AND m2.date > mc.date
         WHERE NOT EXISTS (
