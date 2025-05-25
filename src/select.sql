@@ -27,8 +27,8 @@ WHERE id IN (
 
 -- Requête 4 : 
 \echo "Requête 4 : Sous-requête dans le FROM"
-\echo "Description : Requête qui récupère tous les evènements qui ont été assigné au moins un lieu dont le pays est la France."
-\echo "Parmi ceux-là, récupère seulement les evènements qui n'ont pas encore commencé."
+\echo "Description : Requête qui récupère tous les évènements qui ont été assignés au moins un lieu dont le pays est la France."
+\echo "Parmi ceux-là, on récupère seulement les événements qui n'ont pas encore commencé."
 SELECT titre
 FROM (
     SELECT *
@@ -54,7 +54,7 @@ WHERE id IN (
 
 -- Requête 6 : 
 \echo "Requête 6 : Deux agrégats nécessitant GROUP BY et HAVING"
-\echo "Description : Les utilisateurs likés par 10% du nombre d'utilisateurs total. "
+\echo "Description : Les utilisateurs likés par 10% du nombre d'utilisateurs total."
 SELECT 
     u.pseudo, COUNT(m.id_utilisateur_source) AS likes_recus
 FROM match m
@@ -116,28 +116,28 @@ HAVING COUNT(DISTINCT se.id_evenement) = (
 
 -- Requête 11 : 
 \echo "Requête 11 : 1. Requête non équivalente à cause de null"
-\echo "Description : Evènements dont l'organisateur n'est pas Subway ou n'est pas défini"
+\echo "Description : Évènements dont l'organisateur n'est pas Subway ou n'est pas défini"
 SELECT id, titre
 FROM evenement
 WHERE UPPER(organisateur) != 'SUBWAY' OR organisateur IS NULL;
 
 -- Requête 12 : 
 \echo "Requête 12 : 2. Requête non équivalente à cause de null"
-\echo "Description : Evènements dont l'organisateur n'est pas Subway ou n'est pas défini"
+\echo "Description : Évènements dont l'organisateur n'est pas Subway ou n'est pas défini"
 SELECT id, titre
 FROM evenement
 WHERE NOT UPPER(organisateur) = 'SUBWAY';
 
 -- Requête 13 : 
 \echo "Requête 13 : 1bis. Requête équivalente avec information incomplète"
-\echo "Description : Evènements dont l'organisateur n'est pas Subway"
+\echo "Description : Évènements dont l'organisateur n'est pas Subway"
 SELECT id, titre
 FROM evenement
 WHERE NOT (UPPER(organisateur) = 'SUBWAY');
 
 -- Requête 14 : 
 \echo "Requête 14 : 2bis. Requête équivalente avec information incomplète"
-\echo "Description : Evènements dont l'organisateur est défini et n'est pas Subway"
+\echo "Description : Évènements dont l'organisateur est défini et n'est pas Subway"
 SELECT id, titre
 FROM evenement
 WHERE organisateur IS NOT NULL AND UPPER(organisateur) != 'SUBWAY';
