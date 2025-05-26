@@ -1,0 +1,15 @@
+id,id_utilisateur_source,id_utilisateur_cible,statut_match
+1,4,10,SUGGERER
+2,10,4,SUGGERER
+3,2,10,LIKE
+4,10,2,SUGGERER
+5,9,10,NOPE
+6,10,9,SUGGERER
+7,7,4,LIKE
+8,4,7,LIKE
+9,2,1,NOPE
+10,1,2,NOPE
+11,5,7,LIKE
+12,7,5,LIKE
+13,3,8,LIKE
+14,8,3,LIKE
