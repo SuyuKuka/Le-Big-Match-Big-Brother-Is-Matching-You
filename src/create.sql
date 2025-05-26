@@ -55,7 +55,9 @@ DROP TYPE IF EXISTS TYPE_INTERACTION;
 CREATE TABLE utilisateur(
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(32) NOT NULL,
-    mot_de_passe VARCHAR(64) NOT NULL
+    date_inscription DATE NOT NULL,
+    mot_de_passe VARCHAR(64) NOT NULL,
+    UNIQUE(pseudo)
 );
 
 -- Formulaires
